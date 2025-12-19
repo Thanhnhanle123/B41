@@ -1,211 +1,271 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tính Khoản Trả Góp Xe 0.99</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Công cụ HD SaiSon</title>
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Roboto', sans-serif; }
+    <!-- FONT -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
 
-    body {
-      background: #f0f4f8;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
-
-    .container {
-      background: #ffffff;
-      padding: 30px 40px;
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      max-width: 500px;
-      width: 100%;
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
-      color: #333;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      color: #555;
-    }
-
-    input[type="text"], input[type="number"] {
-      width: 100%;
-      padding: 12px 15px;
-      margin-bottom: 20px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 16px;
-      text-align: right;
-    }
-
-    button {
-      width: 100%;
-      padding: 15px;
-      background: #007bff;
-      color: #fff;
-      font-size: 16px;
-      font-weight: 500;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    button:hover { background: #0056b3; }
-
-    .result {
-      margin-top: 25px;
-      padding: 20px;
-      background: #e7f3ff;
-      border-left: 6px solid #007bff;
-      border-radius: 10px;
-      font-size: 18px;
-      color: #333;
-    }
-
-    .result ul { list-style: none; padding-left: 0; }
-
-    .result li { 
-      margin-bottom: 12px; 
-      padding: 10px;
-      border-radius: 8px;
-      background: #f5f9ff;
-      display: flex;
-      justify-content: space-between;
-      font-weight: 500;
-    }
-
-    .result li span.month { color: #007bff; }
-    .result li span.money { font-weight: 700; color: #333; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>Tính Khoản Trả Góp Xe 0.99</h1>
-
-    <label for="giaXe">Giá xe (VNĐ):</label>
-    <input type="text" id="giaXe" placeholder="Nhập giá xe">
-
-    <label for="traTruocTien">Trả trước (VNĐ):</label>
-    <input type="text" id="traTruocTien" placeholder="Nhập số tiền trả trước">
-
-    <label for="traTruocPercent">Trả trước (%):</label>
-    <input type="number" id="traTruocPercent" placeholder="Nhập phần trăm trả trước" min="0" max="100">
-
-    <button onclick="tinhTraGop()">Tính khoản trả góp 0.99</button>
-
-    <div class="result" id="result" style="display:none;"></div>
-  </div>
-
-  <script>
-    function formatNumber(value) {
-      return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
-
-    function parseNumber(value) {
-      return parseFloat(value.replace(/\./g, '')) || 0;
-    }
-
-    function formatMoney(number) {
-      return formatNumber(Math.round(number)) + " VNĐ";
-    }
-
-    const giaXeInput = document.getElementById('giaXe');
-    const traTienInput = document.getElementById('traTruocTien');
-    const traPercentInput = document.getElementById('traTruocPercent');
-
-    // Format giá xe và tiền trả trước khi nhập
-    giaXeInput.addEventListener('input', (e) => {
-      let numericValue = e.target.value.replace(/\./g, '').replace(/\D/g,'');
-      e.target.value = numericValue ? formatNumber(numericValue) : '';
-      updateTraBeforeFields();
-    });
-
-    traTienInput.addEventListener('input', (e) => {
-      let numericValue = e.target.value.replace(/\./g,'').replace(/\D/g,'');
-      e.target.value = numericValue ? formatNumber(numericValue) : '';
-      updatePercentFromTien();
-    });
-
-    traPercentInput.addEventListener('input', (e) => {
-      updateTienFromPercent();
-    });
-
-    // Khi nhập tiền, update %
-    function updatePercentFromTien() {
-      const giaXe = parseNumber(giaXeInput.value);
-      const traTien = parseNumber(traTienInput.value);
-      if(giaXe > 0) {
-        traPercentInput.value = ((traTien / giaXe) * 100).toFixed(2);
-      } else {
-        traPercentInput.value = '';
-      }
-    }
-
-    // Khi nhập %, update tiền
-    function updateTienFromPercent() {
-      const giaXe = parseNumber(giaXeInput.value);
-      const percent = parseFloat(traPercentInput.value);
-      if(giaXe > 0 && !isNaN(percent)) {
-        traTienInput.value = formatNumber(Math.round(giaXe * percent / 100));
-      } else {
-        traTienInput.value = '';
-      }
-    }
-
-    // Cập nhật 2 ô khi giá xe thay đổi
-    function updateTraBeforeFields() {
-      updatePercentFromTien();
-      updateTienFromPercent();
-    }
-
-    function tinhTraGop() {
-      const giaXe = parseNumber(giaXeInput.value);
-      const traTruoc = parseNumber(traTienInput.value);
-
-      if(isNaN(giaXe) || giaXe <= 0 || traTruoc > giaXe) {
-        alert("Vui lòng nhập giá xe và trả trước hợp lệ!");
-        return;
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Roboto", sans-serif;
       }
 
-      const khoanVay = giaXe - traTruoc;
-
-      const heSoTheoThang = {
-        9: 0.1261792333,
-        12: 0.0982338,
-        15: 0.0814975,
-        18: 0.07036566666,
-        21: 0.06244,
-        24: 0.05651,
-        36: 0.042809
-      };
-
-      let resultHTML = `<strong>Khoản vay:</strong> ${formatMoney(khoanVay)}<br><br>`;
-      resultHTML += `<strong>Khoản trả góp theo các kỳ hạn:</strong><ul>`;
-
-      for (let thang in heSoTheoThang) {
-        const tienTra = heSoTheoThang[thang] * khoanVay + 12000;
-        resultHTML += `<li><span class="month">${thang} tháng</span> <span class="money">${formatMoney(tienTra)}</span></li>`;
+      body {
+        background: #f0f4f8;
+        padding-top: 85px; /* chừa chỗ cho header */
       }
 
-      resultHTML += `</ul>`;
+      /* ===== HEADER ===== */
+      header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 65px;
+        background: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        z-index: 1000;
+      }
 
-      const resultDiv = document.getElementById('result');
-      resultDiv.style.display = "block";
-      resultDiv.innerHTML = resultHTML;
-    }
-  </script>
-</body>
+      .logo {
+        font-size: 20px;
+        font-weight: 700;
+        color: #007bff;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      nav a {
+        margin-left: 22px;
+        text-decoration: none;
+        font-weight: 500;
+        color: #333;
+        padding-bottom: 4px;
+        transition: 0.3s;
+      }
+
+      nav a:hover {
+        color: #007bff;
+      }
+
+      nav a.active {
+        color: #007bff;
+        border-bottom: 2px solid #007bff;
+      }
+
+      /* ===== CONTAINER ===== */
+      .container {
+        max-width: 520px;
+        margin: auto;
+        background: #ffffff;
+        padding: 30px 40px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #333;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #555;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px 15px;
+        margin-bottom: 18px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 16px;
+        text-align: right;
+      }
+
+      button {
+        width: 100%;
+        padding: 15px;
+        background: #007bff;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 500;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      button:hover {
+        background: #0056b3;
+      }
+
+      .result {
+        margin-top: 25px;
+        padding: 20px;
+        background: #e7f3ff;
+        border-left: 6px solid #007bff;
+        border-radius: 10px;
+        font-size: 16px;
+      }
+
+      .result ul {
+        list-style: none;
+        margin-top: 10px;
+      }
+
+      .result li {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        background: #f5f9ff;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        font-weight: 500;
+      }
+
+      .month {
+        color: #007bff;
+      }
+      .money {
+        font-weight: 700;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ===== HEADER ===== -->
+    <header>
+      <div class="logo">🚗 Batch 41</div>
+      <nav>
+        <a href="tinh-tra-gop.html">Tính trả góp</a>
+        <a href="check_old.html">Tính tuổi</a>
+      </nav>
+    </header>
+
+    <!-- ===== CONTENT ===== -->
+    <div class="container">
+      <h1>Tính Trả Góp Xe 0.99</h1>
+
+      <label>Giá xe (VNĐ)</label>
+      <input type="text" id="giaXe" placeholder="Nhập giá xe" />
+
+      <label>Trả trước (VNĐ)</label>
+      <input type="text" id="traTien" placeholder="Nhập số tiền trả trước" />
+
+      <label>Trả trước (%)</label>
+      <input
+        type="number"
+        id="traPercent"
+        placeholder="Nhập %"
+        min="0"
+        max="100"
+      />
+
+      <button onclick="tinhTraGop()">Tính trả góp</button>
+
+      <div class="result" id="result" style="display: none"></div>
+    </div>
+
+    <!-- ===== SCRIPT ===== -->
+    <script>
+      const giaXeInput = document.getElementById("giaXe");
+      const traTienInput = document.getElementById("traTien");
+      const traPercentInput = document.getElementById("traPercent");
+
+      function formatNumber(n) {
+        return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      }
+
+      function parseNumber(v) {
+        return parseFloat(v.replace(/\./g, "")) || 0;
+      }
+
+      giaXeInput.addEventListener("input", (e) => {
+        let v = e.target.value.replace(/\D/g, "");
+        e.target.value = v ? formatNumber(v) : "";
+        updateFromTien();
+      });
+
+      traTienInput.addEventListener("input", (e) => {
+        let v = e.target.value.replace(/\D/g, "");
+        e.target.value = v ? formatNumber(v) : "";
+        updatePercent();
+      });
+
+      traPercentInput.addEventListener("input", updateFromPercent);
+
+      function updatePercent() {
+        const giaXe = parseNumber(giaXeInput.value);
+        const tien = parseNumber(traTienInput.value);
+        if (giaXe > 0)
+          traPercentInput.value = ((tien / giaXe) * 100).toFixed(2);
+      }
+
+      function updateFromPercent() {
+        const giaXe = parseNumber(giaXeInput.value);
+        const p = parseFloat(traPercentInput.value);
+        if (giaXe > 0 && !isNaN(p)) {
+          traTienInput.value = formatNumber(Math.round((giaXe * p) / 100));
+        }
+      }
+
+      function updateFromTien() {
+        updatePercent();
+        updateFromPercent();
+      }
+
+      function tinhTraGop() {
+        const giaXe = parseNumber(giaXeInput.value);
+        const traTruoc = parseNumber(traTienInput.value);
+
+        if (giaXe <= 0 || traTruoc > giaXe) {
+          alert("Dữ liệu không hợp lệ!");
+          return;
+        }
+
+        const vay = giaXe - traTruoc;
+
+        const heSo = {
+          9: 0.1261792333,
+          12: 0.0982338,
+          15: 0.0814975,
+          18: 0.07036566666,
+          21: 0.06244,
+          24: 0.05651,
+          36: 0.042809,
+        };
+
+        let html = `<b>Khoản vay:</b> ${formatNumber(vay)} VNĐ<br><br><ul>`;
+        for (let thang in heSo) {
+          let tien = vay * heSo[thang] + 12000;
+          html += `<li><span class="month">${thang} tháng</span><span class="money">${formatNumber(
+            Math.round(tien)
+          )} VNĐ</span></li>`;
+        }
+        html += "</ul>";
+
+        const result = document.getElementById("result");
+        result.style.display = "block";
+        result.innerHTML = html;
+      }
+    </script>
+  </body>
 </html>
