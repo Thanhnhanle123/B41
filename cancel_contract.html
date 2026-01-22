@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Huỷ Hợp Đồng - Batch 41</title>
+
+    <!-- FONT -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Roboto", sans-serif;
+      }
+
+      body {
+        background: #f0f4f8;
+        padding-top: 85px;
+      }
+
+      /* ===== LOGIN ===== */
+      #loginScreen {
+        position: fixed;
+        inset: 0;
+        background: linear-gradient(135deg, #007bff, #00c6ff);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+      }
+
+      .login-box {
+        background: #fff;
+        padding: 30px 35px;
+        width: 320px;
+        border-radius: 14px;
+        text-align: center;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+      }
+
+      .login-box h2 {
+        margin-bottom: 20px;
+        color: #007bff;
+      }
+
+      .login-box input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        margin-bottom: 15px;
+        text-align: center;
+        font-size: 16px;
+      }
+
+      .login-box button {
+        width: 100%;
+        padding: 12px;
+        background: #007bff;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      #loginError {
+        color: red;
+        margin-top: 10px;
+        font-size: 14px;
+      }
+
+      /* ===== HEADER (GIỐNG INDEX) ===== */
+      header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 65px;
+        background: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        z-index: 1000;
+      }
+
+      .logo {
+        font-size: 20px;
+        font-weight: 700;
+        color: #007bff;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      nav a {
+        margin-left: 22px;
+        text-decoration: none;
+        font-weight: 500;
+        color: #333;
+        padding-bottom: 4px;
+      }
+
+      nav a:hover {
+        color: #007bff;
+      }
+
+      /* ===== CONTAINER ===== */
+      .container {
+        max-width: 520px;
+        margin: auto;
+        background: #ffffff;
+        padding: 30px 40px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 25px;
+      }
+
+      label {
+        display: block;
+        margin-top: 14px;
+        font-weight: 500;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 11px 13px;
+        margin-top: 6px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+      }
+
+      textarea {
+        resize: none;
+        height: 80px;
+      }
+
+      button {
+        margin-top: 20px;
+        width: 100%;
+        padding: 13px;
+        border-radius: 10px;
+        border: none;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        background: #e74c3c;
+        color: #fff;
+      }
+
+      .copy-btn {
+        display: none;
+        margin-top: 10px;
+        background: #3498db;
+      }
+
+      .result {
+        display: none;
+        margin-top: 25px;
+        padding: 15px;
+        background: #eef4ff;
+        border-radius: 8px;
+        white-space: pre-line;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- LOGIN -->
+    <div id="loginScreen">
+      <div class="login-box">
+        <h2>🔐 Đăng nhập</h2>
+        <input type="password" id="loginKey" placeholder="Nhập khoá truy cập" />
+        <button onclick="login()">Xác nhận</button>
+        <p id="loginError"></p>
+      </div>
+    </div>
+
+    <!-- HEADER -->
+    <header>
+      <div class="logo">🚗 Batch 41</div>
+      <nav>
+        <a href="index.html">Tính trả góp</a>
+        <a href="check_old.html">Tính tuổi</a>
+        <a href="cancel_contract.html">Huỷ hợp đồng</a>
+        <a href="#" onclick="logout()">Đăng xuất</a>
+      </nav>
+    </header>
+
+    <!-- CONTENT -->
+    <div class="container">
+      <h1>Form Huỷ Hợp Đồng</h1>
+
+      <form id="cancelForm">
+        <label>Số hợp đồng</label>
+        <input type="text" id="contract" required />
+
+        <label>Tên khách hàng</label>
+        <input type="text" id="customer" required />
+
+        <label>Code SI</label>
+        <input type="text" id="si" value="HPO00001" />
+
+        <label>POScode</label>
+        <input type="text" id="pos" placeholder="VD: 00974 hoặc POS00974" />
+
+        <label>Trạng thái Indus</label>
+        <select id="status">
+          <option>Contract Printing</option>
+          <option>Request for Disbursement</option>
+        </select>
+
+        <label>Lý do huỷ</label>
+        <select id="reasonSelect">
+          <option value="">-- Chọn lý do --</option>
+          <option>Sai tên sản phẩm</option>
+          <option>Nhập sai POS</option>
+          <option>Khách không lấy xe</option>
+          <option>Sai số điện thoại</option>
+          <option>Khách gian</option>
+          <option>Khách đổi xe</option>
+          <option>Đổi ngày đóng tiền</option>
+          <option>Khách mua tiền mặt</option>
+          <option>SI nhập sai giá</option>
+          <option>Đổi người đứng tên</option>
+        </select>
+
+        <textarea id="reason" placeholder="Hoặc nhập lý do khác..."></textarea>
+
+        <button type="submit">Tạo nội dung</button>
+      </form>
+
+      <div class="result" id="resultBox"></div>
+      <button class="copy-btn" id="copyBtn">Copy nội dung</button>
+    </div>
+
+    <script>
+      const ACCESS_KEY = "B41";
+
+      function login() {
+        const key = document.getElementById("loginKey").value;
+        if (key === ACCESS_KEY) {
+          sessionStorage.setItem("logged", "1");
+          document.getElementById("loginScreen").style.display = "none";
+        } else {
+          document.getElementById("loginError").innerText =
+            "❌ Khoá truy cập không đúng";
+        }
+      }
+
+      function logout() {
+        sessionStorage.removeItem("logged");
+        location.href = "index.html";
+      }
+
+      window.onload = () => {
+        if (sessionStorage.getItem("logged") === "1") {
+          document.getElementById("loginScreen").style.display = "none";
+        }
+      };
+
+      document.getElementById("pos").addEventListener("blur", function () {
+        let value = this.value.trim().toUpperCase();
+        if (value && !value.startsWith("POS")) value = "POS" + value;
+        this.value = value;
+      });
+
+      document
+        .getElementById("cancelForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const contract = document.getElementById("contract").value;
+          const customer = document.getElementById("customer").value;
+          const si = document.getElementById("si").value;
+
+          let pos = document.getElementById("pos").value.trim().toUpperCase();
+          if (pos && !pos.startsWith("POS")) pos = "POS" + pos;
+
+          const status = document.getElementById("status").value;
+          const selectReason = document.getElementById("reasonSelect").value;
+          const textReason = document.getElementById("reason").value;
+          const reason = selectReason || textReason;
+
+          if (!reason) {
+            alert("Vui lòng chọn hoặc nhập lý do huỷ!");
+            return;
+          }
+
+          const text = `Dear Anh,
+Huỷ hồ sơ giúp em.
+Số hợp đồng: ${contract}
+Tên khách hàng: ${customer}
+Code SI: ${si}
+POScode: ${pos}
+Trạng thái Indus: ${status}
+Lý do huỷ: ${reason}`;
+
+          document.getElementById("resultBox").style.display = "block";
+          document.getElementById("copyBtn").style.display = "block";
+          document.getElementById("resultBox").textContent = text;
+        });
+
+      document.getElementById("copyBtn").addEventListener("click", function () {
+        navigator.clipboard.writeText(
+          document.getElementById("resultBox").textContent,
+        );
+        alert("Đã copy nội dung!");
+      });
+    </script>
+  </body>
+</html>
